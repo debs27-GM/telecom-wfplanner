@@ -1,0 +1,316 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Telecom Workforce Planner 24/7</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 24px;
+    font-family: Arial, sans-serif;
+    background: #f3f5f8;
+    color: #253247;
+  }
+  .container { max-width: 1050px; margin: auto; }
+  header {
+    background: #17365d;
+    color: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 22px;
+  }
+  header h1 { margin: 0 0 8px; font-size: 25px; }
+  header p { margin: 0; color: #d9e5f5; }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+  .card, .panel {
+    background: white;
+    border-radius: 10px;
+    padding: 18px;
+    box-shadow: 0 2px 8px #0000000c;
+  }
+  .card h3 { margin: 0 0 10px; font-size: 15px; }
+  .number { font-size: 30px; font-weight: bold; }
+  .panel { margin-bottom: 20px; }
+  h2 { font-size: 19px; margin-top: 0; }
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 13px;
+  }
+  label { display: block; font-size: 13px; margin-bottom: 6px; }
+  input, select {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #ccd3dd;
+    border-radius: 6px;
+    background: white;
+    font-size: 14px;
+  }
+  button {
+    background: #1769aa;
+    color: white;
+    border: 0;
+    padding: 11px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 14px;
+  }
+  button:hover { background: #104d80; }
+  .delete {
+    background: #b33b3b;
+    margin: 0;
+    padding: 7px 10px;
+  }
+  .table-wrap { overflow-x: auto; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th, td {
+    text-align: left;
+    padding: 12px 9px;
+    border-bottom: 1px solid #e6eaf0;
+  }
+  th { background: #f5f7fa; }
+  .muted { color: #69788d; font-size: 12px; }
+  .warning { color: #b45309; font-weight: bold; }
+  .good { color: #16804a; font-weight: bold; }
+  footer { color: #69788d; font-size: 12px; text-align: center; padding: 18px; }
+  @media (max-width: 650px) {
+    body { padding: 12px; }
+    .cards { grid-template-columns: 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header>
+  <h1>Telecom Workforce Planner 24/7</h1>
+  <p>Workforce allocation and competency coverage overview</p>
+</header>
+
+<section class="cards">
+  <div class="card">
+    <h3>Morning Shift</h3>
+    <div class="number" id="morningCount">0</div>
+    <div class="muted">07:00 – 15:00</div>
+    <p id="morningSenior" class="muted">Senior staff: 0</p>
+  </div>
+  <div class="card">
+    <h3>Afternoon Shift</h3>
+    <div class="number" id="afternoonCount">0</div>
+    <div class="muted">15:00 – 23:00</div>
+    <p id="afternoonSenior" class="muted">Senior staff: 0</p>
+  </div>
+  <div class="card">
+    <h3>Night Shift</h3>
+    <div class="number" id="nightCount">0</div>
+    <div class="muted">23:00 – 07:00</div>
+    <p id="nightSenior" class="muted">Senior staff: 0</p>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Add Employee</h2>
+  <p class="muted">Use fictional names and sample information.</p>
+
+  <div class="form-grid">
+    <div>
+      <label for="employeeName">Employee Name</label>
+      <input id="employeeName" placeholder="e.g. Employee A">
+    </div>
+    <div>
+      <label for="skill">Primary Competency</label>
+      <select id="skill">
+        <option>IP Core Network</option>
+        <option>Access Network / FTTH</option>
+        <option>Transmission / DWDM</option>
+        <option>Network Monitoring</option>
+        <option>Incident Management</option>
+        <option>Customer / Enterprise Escalation</option>
+      </select>
+    </div>
+    <div>
+      <label for="level">Competency Level</label>
+      <select id="level">
+        <option value="1">Level 1 - Basic Awareness</option>
+        <option value="2">Level 2 - Independent Operator</option>
+        <option value="3">Level 3 - Advanced Practitioner</option>
+        <option value="4">Level 4 - Expert / Team Mentor</option>
+      </select>
+    </div>
+    <div>
+      <label for="shift">Assigned Shift</label>
+      <select id="shift">
+        <option value="morning">Morning</option>
+        <option value="afternoon">Afternoon</option>
+        <option value="night">Night</option>
+      </select>
+    </div>
+  </div>
+
+  <button onclick="addEmployee()">+ Add Employee</button>
+</section>
+
+<section class="panel">
+  <h2>Employee Allocation</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Employee</th>
+          <th>Competency</th>
+          <th>Level</th>
+          <th>Shift</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="employeeList">
+        <tr><td colspan="5" class="muted">No employees added yet.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Shift Coverage Overview</h2>
+  <p class="muted">
+    This initial version counts assigned employees and Level 4 experts.
+    Minimum staffing requirements have not yet been configured.
+  </p>
+  <div id="coverage"></div>
+</section>
+
+<footer>
+  Personal learning project | Telecommunications Operations
+</footer>
+
+</div>
+
+<script>
+let employees = JSON.parse(
+  localStorage.getItem("workforceEmployees") || "[]"
+);
+
+function saveData() {
+  localStorage.setItem(
+    "workforceEmployees",
+    JSON.stringify(employees)
+  );
+}
+
+function addEmployee() {
+  const name = document.getElementById("employeeName").value.trim();
+  const skill = document.getElementById("skill").value;
+  const level = Number(document.getElementById("level").value);
+  const shift = document.getElementById("shift").value;
+
+  if (!name) {
+    alert("Please enter an employee name.");
+    return;
+  }
+
+  employees.push({
+    id: Date.now(),
+    name,
+    skill,
+    level,
+    shift
+  });
+
+  saveData();
+  document.getElementById("employeeName").value = "";
+  renderApp();
+}
+
+function removeEmployee(id) {
+  employees = employees.filter(employee => employee.id !== id);
+  saveData();
+  renderApp();
+}
+
+function renderApp() {
+  const shifts = ["morning", "afternoon", "night"];
+  const labels = {
+    morning: "Morning",
+    afternoon: "Afternoon",
+    night: "Night"
+  };
+
+  const list = document.getElementById("employeeList");
+
+  if (employees.length === 0) {
+    list.innerHTML =
+      '<tr><td colspan="5" class="muted">No employees added yet.</td></tr>';
+  } else {
+    list.innerHTML = employees.map(employee => `
+      <tr>
+        <td>${escapeHTML(employee.name)}</td>
+        <td>${escapeHTML(employee.skill)}</td>
+        <td>Level ${employee.level}</td>
+        <td>${labels[employee.shift]}</td>
+        <td>
+          <button class="delete"
+            onclick="removeEmployee(${employee.id})">
+            Remove
+          </button>
+        </td>
+      </tr>
+    `).join("");
+  }
+
+  shifts.forEach(shift => {
+    const members = employees.filter(e => e.shift === shift);
+    const senior = members.filter(e => e.level === 4).length;
+
+    document.getElementById(shift + "Count").textContent =
+      members.length;
+
+    document.getElementById(shift + "Senior").textContent =
+      "Level 4 experts: " + senior;
+  });
+
+  document.getElementById("coverage").innerHTML =
+    shifts.map(shift => {
+      const members = employees.filter(e => e.shift === shift);
+      const senior = members.filter(e => e.level === 4).length;
+      const status = senior > 0 ? "Expert assigned" : "No Level 4 expert";
+
+      return `
+        <p>
+          <strong>${labels[shift]}:</strong>
+          ${members.length} employee(s) —
+          <span class="${senior > 0 ? "good" : "warning"}">
+            ${status}
+          </span>
+        </p>
+      `;
+    }).join("");
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, character => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[character]);
+}
+
+renderApp();
+</script>
+</body>
+</html>
